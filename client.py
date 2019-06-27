@@ -1,34 +1,32 @@
-#!/usr/bin/env python3
-"""Script for Tkinter GUI chat client."""
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
 
 
-def receive():
-    """Handles receiving of messages."""
+def receber():
+    #Tratamento das mensagens recebidas
     while True:
         try:
-            msg = client_socket.recv(BUFSIZ).decode("utf8")
+            msg = client_socket.recv(1024).decode("utf8")
             msg_list.insert(tkinter.END, msg)
-        except OSError:  # Possibly client has left the chat.
+        except OSError:  # Possibilita que o cliente saia do chat
             break
 
 
-def send(event=None):  # event is passed by binders.
-    """Handles sending of messages."""
-    msg = my_msg.get()
+def enviar(event=None):  #Envento criado quando o botão da interface é pressionado
+
+    msg = my_msg.get() #my_msg interface gráfica
     my_msg.set("")  # Clears input field.
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == ".sair":
+    client_socket.enviar(bytes(msg, "utf8"))
+    if msg == ".sair": #se for igual a .sair fecha o socket
         client_socket.close()
         top.quit()
 
 
-def on_closing(event=None):
+def fechado(event=None):
     """This function is to be called when the window is closed."""
     my_msg.set(".sair")
-    send()
+    enviar()
 
 top = tkinter.Tk()
 top.title("Projeto Redes")
@@ -50,19 +48,15 @@ entry_field.pack()
 send_button = tkinter.Button(top, text="Enviar", command=send, background='lightgreen')
 send_button.pack()
 
-top.protocol("WM_DELETE_WINDOW", on_closing)
-
-#----Now comes the sockets part----
-HOST = '192.168.25.14'
-PORT = 33000
+top.protocol("WM_DELETE_WINDOW", fechado)
 
 
-BUFSIZ = 1024
-ADDR = (HOST, PORT)
+
+ADDR = ('192.168.25.14', 33000)
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect(ADDR)
 
-receive_thread = Thread(target=receive)
-receive_thread.start()
+receber_thread = Thread(target=receber)
+receber_thread.start()
 tkinter.mainloop()  # Starts GUI execution.
