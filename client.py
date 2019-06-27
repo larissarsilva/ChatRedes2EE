@@ -17,14 +17,14 @@ def enviar(event=None):  #Envento criado quando o botão da interface é pressio
 
     msg = my_msg.get() #my_msg interface gráfica
     my_msg.set("")  # Clears input field.
-    client_socket.enviar(bytes(msg, "utf8"))
+    client_socket.send(bytes(msg, "utf8"))
     if msg == ".sair": #se for igual a .sair fecha o socket
         client_socket.close()
         top.quit()
 
 
 def fechado(event=None):
-    """This function is to be called when the window is closed."""
+
     my_msg.set(".sair")
     enviar()
 
@@ -32,9 +32,9 @@ top = tkinter.Tk()
 top.title("Projeto Redes")
 
 messages_frame = tkinter.Frame(top)
-my_msg = tkinter.StringVar()  # For the messages to be sent.
-my_msg.set(" ") #aqui tava o type msg
-scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
+my_msg = tkinter.StringVar()
+my_msg.set(" ")
+scrollbar = tkinter.Scrollbar(messages_frame)
 # Following will contain the messages.
 msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set, background='gray')
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
@@ -43,10 +43,10 @@ msg_list.pack()
 messages_frame.pack()
 
 entry_field = tkinter.Entry(top, textvariable=my_msg)
-entry_field.bind("<Return>", send)
+entry_field.bind("<Return>", enviar)
 entry_field.pack()
-send_button = tkinter.Button(top, text="Enviar", command=send, background='lightgreen')
-send_button.pack()
+enviar_button = tkinter.Button(top, text="Enviar", command=enviar, background='lightgreen')
+enviar_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", fechado)
 
@@ -59,4 +59,4 @@ client_socket.connect(ADDR)
 
 receber_thread = Thread(target=receber)
 receber_thread.start()
-tkinter.mainloop()  # Starts GUI execution.
+tkinter.mainloop()
