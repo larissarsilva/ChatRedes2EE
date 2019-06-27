@@ -20,14 +20,14 @@ def send(event=None):  # event is passed by binders.
     msg = my_msg.get()
     my_msg.set("")  # Clears input field.
     client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
+    if msg == ".sair":
         client_socket.close()
         top.quit()
 
 
 def on_closing(event=None):
     """This function is to be called when the window is closed."""
-    my_msg.set("{quit}")
+    my_msg.set(".sair")
     send()
 
 top = tkinter.Tk()
@@ -47,7 +47,7 @@ messages_frame.pack()
 entry_field = tkinter.Entry(top, textvariable=my_msg)
 entry_field.bind("<Return>", send)
 entry_field.pack()
-send_button = tkinter.Button(top, text="Send", command=send, background='lightgreen')
+send_button = tkinter.Button(top, text="Enviar", command=send, background='lightgreen')
 send_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
